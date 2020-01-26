@@ -6,6 +6,6 @@ import retrofit2.http.GET
 
 interface PostApi {
 
-    @GET
+    @GET("/todos")
     fun getPosts(): Observable<List<Post>>
 }
