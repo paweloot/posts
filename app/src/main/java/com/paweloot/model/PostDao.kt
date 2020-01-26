@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface PostDao {
 
-    @Query("SELECT * from post_table")
+    @Query("SELECT * from post")
     fun findAll(): List<Post>
 
     @Insert
