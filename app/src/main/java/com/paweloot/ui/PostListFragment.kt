@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.paweloot.di.ViewModelFactory
 import com.paweloot.posts.R
 import com.paweloot.posts.databinding.FragmentPostListBinding
 
@@ -26,7 +28,9 @@ class PostListFragment : Fragment() {
     ): View? {
 
         binding = FragmentPostListBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(PostListViewModel::class.java)
+        viewModel =
+            ViewModelProvider(this, ViewModelFactory(requireActivity() as AppCompatActivity))
+                .get(PostListViewModel::class.java)
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
             if (errorMessage != null)
