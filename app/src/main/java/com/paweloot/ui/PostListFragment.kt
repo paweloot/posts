@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.paweloot.posts.R
 import com.paweloot.posts.databinding.FragmentPostListBinding
 
@@ -15,14 +18,22 @@ class PostListFragment : Fragment() {
     private lateinit var binding: FragmentPostListBinding
     private lateinit var viewModel: PostListViewModel
 
+    private var errorSnackbar: Snackbar? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding =
-            FragmentPostListBinding.inflate(inflater, container, false)
+        binding = FragmentPostListBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(PostListViewModel::class.java)
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
+            if (errorMessage != null)
+                showErrorSnackbar(errorMessage)
+            else
+                hideErrorSnackbar()
+        })
 
         binding.viewModel = viewModel
         binding.postList.layoutManager = LinearLayoutManager(context)
@@ -30,7 +41,13 @@ class PostListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    private fun showErrorSnackbar(@StringRes errorMessage: Int) {
+        errorSnackbar = Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_INDEFINITE)
+        errorSnackbar?.setAction(R.string.retry, viewModel.errorClickListener)
+        errorSnackbar?.show()
+    }
+
+    private fun hideErrorSnackbar() {
+        errorSnackbar?.dismiss()
     }
 }
