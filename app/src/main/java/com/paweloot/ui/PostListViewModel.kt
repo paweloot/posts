@@ -3,6 +3,7 @@ package com.paweloot.ui
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.paweloot.base.BaseViewModel
+import com.paweloot.model.Post
 import com.paweloot.network.PostApi
 import com.paweloot.posts.R
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,6 +16,7 @@ class PostListViewModel : BaseViewModel() {
     @Inject
     lateinit var postApi: PostApi
 
+    val postListAdapter: PostListAdapter = PostListAdapter()
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadPosts() }
@@ -37,7 +39,7 @@ class PostListViewModel : BaseViewModel() {
             .doOnSubscribe { onRetrievePostListStart() }
             .doOnTerminate { onRetrievePostListFinish() }
             .subscribe(
-                { onRetrievePostListSuccess() },
+                { result -> onRetrievePostListSuccess(result) },
                 { onRetrievePostListError() }
             )
     }
@@ -51,8 +53,8 @@ class PostListViewModel : BaseViewModel() {
         loadingVisibility.value = View.GONE
     }
 
-    private fun onRetrievePostListSuccess() {
-
+    private fun onRetrievePostListSuccess(postList: List<Post>) {
+        postListAdapter.updatePostList(postList)
     }
 
     private fun onRetrievePostListError() {
