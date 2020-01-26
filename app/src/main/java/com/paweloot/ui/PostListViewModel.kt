@@ -1,5 +1,7 @@
 package com.paweloot.ui
 
+import android.view.View
+import androidx.lifecycle.MutableLiveData
 import com.paweloot.base.BaseViewModel
 import com.paweloot.network.PostApi
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,6 +13,8 @@ class PostListViewModel : BaseViewModel() {
 
     @Inject
     lateinit var postApi: PostApi
+
+    val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
 
     private lateinit var subscription: Disposable
 
@@ -36,11 +40,11 @@ class PostListViewModel : BaseViewModel() {
     }
 
     private fun onRetrievePostListStart() {
-
+        loadingVisibility.value = View.VISIBLE
     }
 
     private fun onRetrievePostListFinish() {
-
+        loadingVisibility.value = View.GONE
     }
 
     private fun onRetrievePostListSuccess() {
